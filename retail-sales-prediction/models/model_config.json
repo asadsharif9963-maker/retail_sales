@@ -1,0 +1,49 @@
+{
+  "feature_names": [
+    "year",
+    "month",
+    "day",
+    "dow",
+    "doy",
+    "week",
+    "quarter",
+    "is_weekend",
+    "is_month_start",
+    "is_month_end",
+    "lag_1",
+    "lag_7",
+    "rmean_7",
+    "rstd_7",
+    "rmed_7",
+    "Product Category"
+  ],
+  "cat_cols": [
+    "Product Category"
+  ],
+  "lags": [
+    1,
+    7
+  ],
+  "windows": [
+    7
+  ],
+  "freq": "MS",
+  "series_keys": [
+    "Product Category"
+  ],
+  "date_col": "date",
+  "target_col": "Total Amount",
+  "metrics": {
+    "MAE": 5014.961111111111,
+    "RMSE": 6134.9660198959355,
+    "R2": -1.1117858652320862,
+    "MAPE": 26.662210753280146,
+    "sMAPE": 32.975951811461925,
+    "WAPE": 31.21021332503544,
+    "n": 3
+  },
+  "model_name": "RandomForest",
+  "trained_at": "2026-11-13T17:45:42Z",
+  "product_category": "Product Category",
+  "product_id": "Product Category"
+}
