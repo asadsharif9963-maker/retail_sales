@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Analyze{% endblock %}
+<link rel="stylesheet" href="style.css">
+{% block content %}
+<div class="eyebrow">Step 2 of 4</div>
+<h1>Analyze dataset</h1>
+<p class="sub-left">{{ raw_filename }} · mapped columns can be overridden below.</p>
+
+{% if warnings %}
+<div class="banner banner-warn">
+    <strong>Auto-detection notes</strong>
+    <ul>{% for w in warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('analyze') }}" class="form-card" id="analyze-form">
+    <h2 class="form-h">Column mapping</h2>
+    <div class="form-grid">
+        {% set fields = [
+            ('date_col','Date column', true),
+            ('target_col','Target column', true),
+            ('product_col','Product (optional)', false),
+            ('store_col','Store (optional)', false),
+            ('category_col','Category (optional)', false),
+            ('quantity_col','Quantity (optional)', false),
+            ('price_col','Price (optional)', false),
+            ('discount_col','Discount (optional)', false),
+        ] %}
+        {% set schema_map = {
+            'date_col': schema.date, 'target_col': schema.target,
+            'product_col': schema.product, 'store_col': schema.store,
+            'category_col': schema.category, 'quantity_col': schema.quantity,
+            'price_col': schema.price, 'discount_col': schema.discount,
+        } %}
+        {% for key, label, required in fields %}
+        <label class="field">
+            <span>{{ label }}{% if required %} *{% endif %}</span>
+            <select name="{{ key }}" {% if required %}required{% endif %}>
+                <option value="">—</option>
+                {% for c in columns %}
+                <option value="{{ c }}" {% if schema_map[key] == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% endfor %}
+    </div>
+    <button class="btn btn-primary" type="submit">Validate and continue</button>
+</form>
+
+<h2 class="section-h">Data preview</h2>
+<div class="table-wrap">{{ preview|safe }}</div>
+
+<h2 class="section-h">Quality report</h2>
+<div class="grid">
+    <div class="card"><h3>Rows · Columns</h3>
+        <div class="value">{{ quality.shape[0] }} · {{ quality.shape[1] }}</div></div>
+    <div class="card"><h3>Duplicate rows</h3>
+        <div class="value">{{ quality.duplicates }}</div></div>
+    <div class="card"><h3>Columns with missing values</h3>
+        <div class="value">{{ quality.missing_pct|length }}</div></div>
+    <div class="card"><h3>Numeric columns with outliers</h3>
+        <div class="value">{{ quality.outliers|length }}</div></div>
+</div>
+{% endblock %}

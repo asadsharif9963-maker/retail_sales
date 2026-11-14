@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+<link rel="stylesheet" href="style.css"></link>
+
+{% block content %}
+<section class="hero">
+    <div class="eyebrow">Retail forecasting · Local</div>
+    <h1>Predict sales before they happen.</h1>
+    <p class="sub">
+        Upload any retail dataset — daily, weekly, transaction-level, multi-product —
+        and the pipeline will auto-detect its structure, train a dataset-specific model,
+        and produce recursive future predictions.
+    </p>
+    <div class="cta-row">
+        <a class="btn btn-primary" href="{{ url_for('upload') }}">Upload a dataset</a>
+        {% if session.get('sid') %}
+            <a class="btn btn-secondary" href="{{ url_for('results') }}">Open last run</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid">
+    <div class="card"><h3>Panel-aware</h3><div class="value">1 → N series</div>
+        <div class="note">Every product × store combination is its own time series.</div></div>
+    <div class="card"><h3>Validation</h3><div class="value">Temporal</div>
+        <div class="note">Chronological hold-out — no random shuffling, no leakage.</div></div>
+    <div class="card"><h3>Models</h3><div class="value">CatBoost + RF</div>
+        <div class="note">Compared against naive and seasonal-naive baselines.</div></div>
+    <div class="card"><h3>Forecast</h3><div class="value">Recursive</div>
+        <div class="note">1-step predictions feed back into the lag structure.</div></div>
+</section>
+
+<section class="note-block">
+    <h2>How it works</h2>
+    <ol>
+        <li><strong>Upload</strong> a CSV or Excel file.</li>
+        <li><strong>Analyze</strong> — the pipeline auto-detects the date, target and panel-key columns; you can override every mapping.</li>
+        <li><strong>Train</strong> — every candidate model is fit on a chronological training window and ranked by WAPE on a validation window.</li>
+        <li><strong>Results</strong> — the best model is refit on train+val, scored on the untouched test window, and used to generate recursive forecasts.</li>
+    </ol>
+</section>
+{% endblock %}

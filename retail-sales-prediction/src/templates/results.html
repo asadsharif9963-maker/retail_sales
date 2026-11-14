@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<div class="eyebrow">Step 4 of 4</div>
+<h1>Forecast results</h1>
+<p class="sub-left">
+    Model: <span class="pill">{{ state.model_name or '—' }}</span> ·
+    Frequency: {{ state.freq or '—' }} ·
+    Horizon: {{ horizon }} steps ·
+    Trained {{ state.trained_at }}
+</p>
+
+<section class="grid">
+    <div class="card"><h3>Total historical sales</h3>
+        <div class="value">{{ "%.0f"|format(total_hist) }}</div></div>
+    <div class="card"><h3>Forecasted sales</h3>
+        <div class="value">{{ "%.0f"|format(total_fc) }}</div></div>
+    <div class="card"><h3>Series covered</h3>
+        <div class="value">{{ series_count }}</div></div>
+    <div class="card"><h3>Test WAPE</h3>
+        <div class="value">{{ "%.2f"|format(state.metrics.WAPE) }}%</div>
+        <div class="note">On the chronological hold-out window.</div></div>
+</section>
+
+<h2 class="section-h">Model comparison</h2>
+<div class="table-wrap">
+<table class="data-table">
+    <thead><tr>
+        <th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE</th><th>WAPE</th>
+    </tr></thead>
+    <tbody>
+    {% for r in state.suite %}
+    <tr {% if loop.first %}class="selected-row"{% endif %}>
+        <td>{{ r.model }}{% if loop.first %} <span class="pill">best</span>{% endif %}</td>
+        <td>{{ "%.2f"|format(r.MAE) if r.MAE is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(r.RMSE) if r.RMSE is not none else "—" }}</td>
+        <td>{{ "%.3f"|format(r.R2) if r.R2 is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(r.MAPE) if r.MAPE is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(r.WAPE) if r.WAPE is not none else "—" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<h2 class="section-h">Charts</h2>
+{% for chart in charts %}
+<div class="chart-wrap">{{ chart|safe }}</div>
+{% endfor %}
+
+<h2 class="section-h">Forecast preview</h2>
+<div class="table-wrap">{{ fc_preview|safe }}</div>
+
+<h2 class="section-h">Download</h2>
+<div class="cta-row left">
+    <a class="btn btn-primary" href="{{ url_for('download', kind='csv') }}">Download CSV</a>
+    <a class="btn btn-secondary" href="{{ url_for('download', kind='excel') }}">Download Excel</a>
+    <a class="btn btn-secondary" href="{{ url_for('download', kind='pdf') }}">Download PDF</a>
+    <a class="btn btn-ghost" href="{{ url_for('reset') }}">New session</a>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Meridian{% endblock %} · Retail Forecasting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+</head>
+<body>
+<nav class="nav">
+    <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">M</span>
+        Meridian
+    </a>
+    <div class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('upload') }}">Upload</a>
+        {% if session.get('sid') %}
+            <a href="{{ url_for('analyze') }}">Analyze</a>
+            <a href="{{ url_for('train') }}">Train</a>
+            <a href="{{ url_for('results') }}">Results</a>
+            <a href="{{ url_for('reset') }}" class="nav-strong">New session</a>
+        {% endif %}
+    </div>
+</nav>
+
+<main>
+    {% if SRC_ERROR %}
+        <div class="banner banner-error">
+            <strong>ML pipeline unavailable.</strong> {{ SRC_ERROR }}<br>
+            Make sure <code>src/</code> is present and <code>pip install -r requirements.txt</code> succeeded.
+        </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flashes">
+            {% for cat, msg in messages %}
+                <div class="flash flash-{{ cat }}">{{ msg }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer>Meridian · Retail forecasting · Flask + Plotly</footer>
+
+<div id="overlay" class="overlay hidden">
+    <div class="overlay-card">
+        <div class="spinner"></div>
+        <p>Working — this can take 30–60 seconds on larger datasets…</p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

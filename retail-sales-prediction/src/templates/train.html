@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Train{% endblock %}
+
+{% block content %}
+<div class="eyebrow">Step 3 of 4</div>
+<h1>Configure training</h1>
+<p class="sub-left">
+    Validation will train every candidate model on a chronological split
+    and rank them by WAPE on the validation window.
+</p>
+
+<form method="POST" action="{{ url_for('train') }}" class="form-card" id="train-form">
+    <div class="form-grid two">
+        <label class="field">
+            <span>Frequency</span>
+            <select name="freq">
+                <option value="">Auto-detect</option>
+                <option value="D">Daily</option>
+                <option value="W">Weekly</option>
+                <option value="MS">Monthly</option>
+            </select>
+        </label>
+        <label class="field">
+            <span>Forecast horizon (steps)</span>
+            <input type="number" name="horizon" min="1" max="180" value="30" required />
+        </label>
+    </div>
+
+    <div class="note-block inline">
+        <p><strong>Assumption.</strong> Price, discount, and promotion are carried
+        forward at their last observed value across the forecast horizon. No future
+        exogenous values are invented.</p>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Train models</button>
+</form>
+
+<section class="note-block">
+    <h2>What happens on submit</h2>
+    <ol>
+        <li>Panel construction (per-series resampling)</li>
+        <li>Feature engineering (date, lag, rolling — no future leakage)</li>
+        <li>Chronological train/val/test split</li>
+        <li>Naive · SeasonalNaive · RandomForest · CatBoost candidates</li>
+        <li>Best model refit on train+val, evaluated on untouched test</li>
+        <li>Recursive forecast over the requested horizon</li>
+    </ol>
+</section>
+{% endblock %}

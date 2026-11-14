@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+
+{% block content %}
+<div class="eyebrow">Step 1 of 4</div>
+<h1>Upload a dataset</h1>
+<p class="sub-left">CSV or Excel. Up to 100 MB.</p>
+
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}"
+      class="form-card" id="upload-form">
+    <label class="dropzone" for="file">
+        <input id="file" name="file" type="file" accept=".csv,.xlsx,.xls,.xlsm" required />
+        <div class="dropzone-inner">
+            <div class="dropzone-title">Drop a file here or click to browse</div>
+            <div class="dropzone-note" id="file-name">No file selected</div>
+        </div>
+    </label>
+    <button class="btn btn-primary" type="submit">Continue</button>
+</form>
+
+<section class="note-block">
+    <h2>Expected formats</h2>
+    <p>Any of the following shapes is supported — the pipeline infers which one you have:</p>
+    <ul>
+        <li>Daily / weekly / monthly aggregated sales</li>
+        <li>Transaction-level rows (aggregated automatically)</li>
+        <li>Multi-product or multi-store panels</li>
+        <li>Any column naming — auto-detection is heuristic, and overridable</li>
+    </ul>
+</section>
+{% endblock %}
